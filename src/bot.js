@@ -47,7 +47,7 @@ async function searchWatsonEntities(text) {
       }
     }
   }
-  const response =  await naturalLanguageUnderstanding.analyze(parameters)
+  const response = await naturalLanguageUnderstanding.analyze(parameters)
   return response
 }
 
@@ -62,12 +62,13 @@ async function searchWatsonKeyords(text) {
       }
     }
   }
-  const response =  await naturalLanguageUnderstanding.analyze(parameters)
+  const response = await naturalLanguageUnderstanding.analyze(parameters)
   return response
 }
 
 bot.hears(/Palavras Chaves/i, ctx => {
   ctx.reply("Ok, me mande o texto que deseja encontrar as palavras chaves")
+  escolha = 0;
 })
 
 bot.hears(/Sentimento ou Emoção/i, ctx => {
@@ -96,13 +97,18 @@ bot.on("text", async ctx => {
   let msg = ctx.message.text
   if (escolha == 0) {
     var resultWatson = await searchWatsonKeyords(msg)
-    //console.log(JSON.stringify(resultWatson, null, 2))
-    ctx.reply(JSON.stringify(resultWatson.keywords, null, 2))
+    console.log((JSON.stringify(resultWatson.keywords, null, 2)))
+    resultWatson.keywords.map(keyword => {
+      ctx.reply(`Palavra chave encontrada: *${keyword.text}*`)
+    })
+
   }
   else if (escolha == 1) {
     var resultWatson = await searchWatsonEntities(msg)
-    //console.log(JSON.stringify(resultWatson, null, 2))
-    ctx.reply(JSON.stringify(resultWatson.keywords, null, 2))
+    resultWatson.keywords.map(keyword => {
+      ctx.replyWithMarkdown(`Palavra chave encontrada: *${keyword.text}* 
+Sentimento/emoção transmitido: *${keyword.sentiment.label}*`)
+    })
   }
   else {
     ctx.reply("Muito obrigado, por sua sugestão volte sempre! 😎")
